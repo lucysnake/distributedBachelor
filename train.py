@@ -42,13 +42,13 @@ class Trainer:
         output = self.model(source)
         bceLoss = nn.BCEWithLogitsLoss() 
         loss = bceLoss(output, targets)
-        print("loss:  " + loss.item())
+        print("loss:  " + loss.item(),flush=True)
         loss.backward()
         self.optimizer.step()
 
     def _run_epoch(self, epoch):
         b_sz = len(next(iter(self.train_data))[0])
-        print(f"[GPU{self.gpu_id}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)}")
+        print(f"[GPU{self.gpu_id}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)}",flush=True)
         self.train_data.sampler.set_epoch(epoch)
         for source, targets in self.train_data:
             source = source.to(self.gpu_id)
@@ -59,7 +59,7 @@ class Trainer:
         ckp = self.model.module.state_dict()
         PATH = "checkpoint.pt"
         torch.save(ckp, PATH)
-        print(f"Epoch {epoch} | Training checkpoint saved at {PATH}")
+        print(f"Epoch {epoch} | Training checkpoint saved at {PATH}", flush=True)
 
     def train(self, max_epochs: int):
         for epoch in range(max_epochs):
@@ -90,8 +90,8 @@ def prepare_dataloader(dataset: Dataset, batch_size: int):
 
 
 def main(rank: int, world_size: int, save_every: int, total_epochs: int, batch_size: int):
-    print(rank)
-    print(world_size)
+    print(rank, flush=True)
+    print(world_size, flush=True)
     ddp_setup(rank, world_size)
     dataset, model, optimizer = load_train_objs()
     train_data = prepare_dataloader(dataset, batch_size)
