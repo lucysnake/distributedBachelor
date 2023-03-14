@@ -42,6 +42,7 @@ class Trainer:
         output = self.model(source)
         bceLoss = nn.BCEWithLogitsLoss() 
         loss = bceLoss(output, targets)
+        print("loss:  " + loss.item())
         loss.backward()
         self.optimizer.step()
 
